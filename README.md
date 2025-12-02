@@ -34,116 +34,49 @@ This project demonstrates how to:
 
 📄 Full Code (POS Tagging Pipeline)
 
-# ============================================
-# STEP 1 — LOAD LIBRARIES & NLP MODEL
-# ============================================
-
+🧩 Step 1 — Load Libraries & NLP Model
 import spacy
 import pandas as pd
 
 # Load SpaCy English model
 nlp = spacy.load('en_core_web_sm')
 
-
-# ============================================
-# STEP 2 — RAW TEXT INPUT
-# (text from Jane Austen — pre-lowercased + no punctuation)
-# ============================================
-
+📄 Step 2 — Raw Text Input
 emma_ja = (
-    'emma woodhouse handsome clever and rich with a comfortable home and happy disposition ...'
+    "emma woodhouse handsome clever and rich with a comfortable home..."
 )
 
-
-# ============================================
-# STEP 3 — RUN THE NLP PIPELINE (TOKENIZATION + POS TAGGING)
-# ============================================
-
+⚙️ Step 3 — Run NLP Pipeline (Tokenization + POS Tagging)
 spacy_doc = nlp(emma_ja)
 
-# View token + POS + lemma + tag (first 10 tokens)
+# View first 10 tokens
 for t in spacy_doc[:10]:
-    print(t.text, t.lemma_, t.pos_, t.tag_)    # With "_" → human-readable
-                                               # Without "_" → machine numeric ID
+    print(t.text, t.lemma_, t.pos_, t.tag_)
 
-
-# ============================================
-# STEP 4 — BUILD A DATAFRAME OF TOKEN + POS TAG
-# (Approach 2 — FASTEST + MOST READABLE)
-# ============================================
-
+🏗️ Step 4 — Build DataFrame of Token + POS
 rows = [{'token': token.text, 'pos_tag': token.pos_} for token in spacy_doc]
 pos_df = pd.DataFrame(rows)
 
-# pos_df now looks like:
-# token     pos_tag
-# emma      PROPN
-# woodhouse PROPN
-# handsome  ADJ
-# clever    ADJ
-# and       CCONJ
-# ...
-
-
-# ============================================
-# STEP 5 — COUNT UNIQUE TOKENS PER POS
-# (Approach 2 — value_counts is faster)
-# ============================================
-
+📊 Step 5 — Count Unique Tokens per POS (Fast Method)
 pos_df_counts = (
     pos_df
-        .value_counts(['token', 'pos_tag'])        # → counts per token+POS (creates MultiIndex)
-        .reset_index(name='counts')               # → convert MultiIndex → DataFrame
-        .sort_values('counts', ascending=False)   # → sort highest freq first
+        .value_counts(['token', 'pos_tag'])
+        .reset_index(name='counts')
+        .sort_values('counts', ascending=False)
 )
 
-# pos_df_counts now contains:
-# token      pos_tag     counts
-# of         ADP         14
-# her        PRON        9
-# had        AUX         9
-# ...
-
-
-# ============================================
-# STEP 6 — COUNT HOW MANY UNIQUE WORDS BELONG TO EACH POS
-# ============================================
-
+📈 Step 6 — Count How Many Unique Words Belong to Each POS
 pos_df_poscounts = (
     pos_df_counts['pos_tag']
-        .value_counts()                   # → counts how many unique tokens per POS
+        .value_counts()
         .sort_values(ascending=False)
 )
 
-# Example output:
-# NOUN    35
-# VERB    19
-# ADJ     18
-# ADV     18
-# ...
-
-
-# ============================================
-# STEP 7 — FILTER TOP NOUNS (OR ANY POS)
-# ============================================
-
+🔎 Step 7 — Filter Top Nouns
 top_nouns = (
-    pos_df_counts
-        [pos_df_counts['pos_tag'] == 'NOUN']   # → filter NOUN
-        .head(10)                              # → take top 10
+    pos_df_counts[pos_df_counts['pos_tag'] == 'NOUN']
+        .head(10)
 )
-
-# Result:
-# governess   NOUN   3
-# friends     NOUN   3
-# mother      NOUN   2
-# daughters   NOUN   2
-# ...
-
-
-# ============================================
-# END OF PIPELINE
-# ============================================
 
 
 
