@@ -38,7 +38,6 @@ This project demonstrates how to:
 import spacy
 import pandas as pd
 
-# Load SpaCy English model
 nlp = spacy.load('en_core_web_sm')
 
 📄 Step 2 — Raw Text Input
@@ -49,7 +48,7 @@ emma_ja = (
 ⚙️ Step 3 — Run NLP Pipeline (Tokenization + POS Tagging)
 spacy_doc = nlp(emma_ja)
 
-# View first 10 tokens
+
 for t in spacy_doc[:10]:
     print(t.text, t.lemma_, t.pos_, t.tag_)
 
